@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <meta name="google-site-verification" content="LoRCayJqWfbdAnCpnAjdE7NwEYgCw4Zi46810tcwPtg" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>전역일 계산기 - 군 복무 전역일 자동 계산</title>
+
+<meta name="description" content="군 전역일과 복무 기간을 자동으로 계산해주는 무료 계산기입니다.">
+
+</head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>전역일 계산기</title>
@@ -9,23 +18,19 @@
 body{
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #eef2ff, #f5f7fa);
-    text-align:center;
+    margin:0;
     padding:40px;
+    text-align:center;
     color:#1f2937;
 }
 
 .container{
-    max-width:600px;
+    max-width:650px;
     margin:auto;
     background:white;
     padding:35px;
     border-radius:18px;
     box-shadow:0 10px 25px rgba(0,0,0,0.08);
-}
-
-h1{
-    color:#111827;
-    margin-bottom:10px;
 }
 
 nav{
@@ -35,12 +40,16 @@ nav{
 nav a{
     text-decoration:none;
     color:#2563eb;
-    margin:0 6px;
+    margin:0 8px;
     font-weight:500;
 }
 
 nav a:hover{
     text-decoration:underline;
+}
+
+h1{
+    margin-bottom:10px;
 }
 
 input, select, button{
@@ -53,59 +62,47 @@ input, select, button{
     box-sizing:border-box;
 }
 
-input:focus, select:focus{
-    outline:none;
-    border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,0.15);
-}
-
 button{
     background:linear-gradient(135deg,#2563eb,#1d4ed8);
     color:white;
     border:none;
     cursor:pointer;
     font-weight:bold;
-    transition:0.2s;
 }
 
 button:hover{
     transform:translateY(-2px);
-    box-shadow:0 8px 15px rgba(37,99,235,0.25);
 }
 
 .result{
-    margin-top:25px;
-    font-size:26px;
+    margin-top:20px;
+    font-size:22px;
     font-weight:bold;
-    padding:15px;
     background:#f3f4f6;
+    padding:15px;
     border-radius:12px;
 }
 
 .sub{
-    margin-top:8px;
-    color:#6b7280;
+    margin-top:6px;
     font-size:14px;
-}
-
-/* progress */
-.progress-wrap{
-    margin-top:20px;
+    color:#6b7280;
 }
 
 .bar-bg{
     width:100%;
-    height:25px;
+    height:22px;
     background:#e5e7eb;
     border-radius:20px;
     overflow:hidden;
+    margin-top:15px;
 }
 
 .bar-fill{
-    width:0%;
     height:100%;
+    width:0%;
     background:#2563eb;
-    transition:0.5s;
+    transition:0.4s;
 }
 </style>
 </head>
@@ -114,7 +111,6 @@ button:hover{
 
 <div class="container">
 
-<!-- NAV -->
 <nav>
   <a href="index.html">전역일 계산기</a>
   <a href="saving.html">군 적금 계산기</a>
@@ -125,100 +121,66 @@ button:hover{
 <h1>🎖 전역일 계산기</h1>
 
 <p>복무 유형 선택</p>
-
 <select id="serviceType">
     <option value="18">육군 (18개월)</option>
     <option value="20">해군 (20개월)</option>
-    <option value="21">공군 (21개월)</option>
-    <option value="21">사회복무요원 (21개월)</option>
+    <option value="21">공군 / 사회복무 (21개월)</option>
 </select>
 
-<p>입대일 / 소집일 선택</p>
-
+<p>입대일 선택</p>
 <input type="date" id="enlistDate">
 
-<button onclick="calculateDischarge()">전역일 계산하기</button>
+<button onclick="calculate()">전역일 계산</button>
 
 <div class="result" id="result"></div>
 <div class="sub" id="remaining"></div>
 <div class="sub" id="served"></div>
 
-<div class="progress-wrap">
-  <div class="bar-bg">
-    <div id="progressBar" class="bar-fill"></div>
-  </div>
-  <p id="progressText"></p>
+<div class="bar-bg">
+  <div id="bar" class="bar-fill"></div>
 </div>
 
-<!-- 문의하기 -->
-<section id="contact" style="margin-top:60px;">
-  <h2>문의하기</h2>
-
-  <form action="https://formspree.io/f/mqeognew" method="POST">
-
-    <input type="email" name="email" placeholder="이메일 (답장 원할 경우 입력)">
-
-    <textarea name="message" placeholder="불편한 점 / 개선 의견 / 버그 신고" required></textarea>
-
-    <button type="submit">보내기</button>
-
-  </form>
-
-  <p style="font-size:12px; color:gray;">
-    * 익명 문의 가능 / 답장을 원하면 이메일 입력
-  </p>
-</section>
+<p id="percent"></p>
 
 </div>
 
 <script>
-function calculateDischarge(){
+function calculate(){
 
     const enlistInput = document.getElementById("enlistDate").value;
-
     if(!enlistInput){
-        alert("날짜를 선택해주세요.");
+        alert("날짜를 선택하세요");
         return;
     }
 
     const months = parseInt(document.getElementById("serviceType").value);
 
-    const enlistDate = new Date(enlistInput);
-    const dischargeDate = new Date(enlistDate);
-
-    dischargeDate.setMonth(dischargeDate.getMonth() + months);
-
-    document.getElementById("result").innerHTML =
-        "예상 전역일 : " +
-        dischargeDate.toLocaleDateString("ko-KR");
+    const start = new Date(enlistInput);
+    const end = new Date(start);
+    end.setMonth(end.getMonth() + months);
 
     const today = new Date();
 
-    const diff = dischargeDate - today;
-    const remain = Math.ceil(diff / (1000*60*60*24));
+    const remain = Math.ceil((end - today) / (1000*60*60*24));
+    const total = Math.ceil((end - start) / (1000*60*60*24));
+    const served = Math.ceil((today - start) / (1000*60*60*24));
 
-    const totalDays = Math.ceil((dischargeDate - enlistDate) / (1000*60*60*24));
-    const servedDays = Math.ceil((today - enlistDate) / (1000*60*60*24));
-
-    document.getElementById("served").innerHTML =
-        "복무한 기간 : " + servedDays + "일";
-
-    let progress = Math.floor((servedDays / totalDays) * 100);
-
+    let progress = Math.floor((served / total) * 100);
     if(progress < 0) progress = 0;
     if(progress > 100) progress = 100;
 
-    document.getElementById("progressBar").style.width = progress + "%";
-    document.getElementById("progressText").innerHTML =
-        "복무 진행률 : " + progress + "%";
+    document.getElementById("result").innerText =
+        "전역일: " + end.toLocaleDateString("ko-KR");
 
-    if(remain > 0){
-        document.getElementById("remaining").innerHTML =
-            "남은 기간 : " + remain + "일";
-    } else {
-        document.getElementById("remaining").innerHTML =
-            "전역일이 지났습니다.";
-    }
+    document.getElementById("served").innerText =
+        "복무한 기간: " + served + "일";
+
+    document.getElementById("remaining").innerText =
+        remain > 0 ? "남은 기간: " + remain + "일" : "전역 완료";
+
+    document.getElementById("bar").style.width = progress + "%";
+    document.getElementById("percent").innerText =
+        "진행률: " + progress + "%";
 }
 </script>
 
