@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전역일 계산기</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f7fa;
+    text-align:center;
+    padding:40px;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1{
+    color:#333;
+}
+
+input, select, button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    font-size:16px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:0.9;
+}
+
+.result{
+    margin-top:25px;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.sub{
+    margin-top:10px;
+    color:#666;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>전역일 계산기</h1>
+
+<p>복무 유형 선택</p>
+
+<select id="serviceType">
+    <option value="18">육군 (18개월)</option>
+    <option value="20">해군 (20개월)</option>
+    <option value="21">공군 (21개월)</option>
+    <option value="21">사회복무요원 (21개월)</option>
+</select>
+
+<p>입대일 / 소집일 선택</p>
+
+<input type="date" id="enlistDate">
+
+<button onclick="calculateDischarge()">
+전역일 계산하기
+</button>
+
+<div class="result" id="result"></div>
+<div class="sub" id="remaining"></div>
+
+</div>
+
+<script>
+
+function calculateDischarge(){
+
+    const enlistInput =
+        document.getElementById("enlistDate").value;
+
+    if(!enlistInput){
+        alert("날짜를 선택해주세요.");
+        return;
+    }
+
+    const months =
+        parseInt(
+            document.getElementById("serviceType").value
+        );
+
+    const enlistDate = new Date(enlistInput);
+
+    const dischargeDate = new Date(enlistDate);
+
+    dischargeDate.setMonth(
+        dischargeDate.getMonth() + months
+    );
+
+    document.getElementById("result").innerHTML =
+        "예상 전역일 : " +
+        dischargeDate.toLocaleDateString("ko-KR");
+
+    const today = new Date();
+
+    const diff =
+        dischargeDate - today;
+
+    const remain =
+        Math.ceil(diff / (1000*60*60*24));
+
+    if(remain > 0){
+        document.getElementById("remaining").innerHTML =
+            "남은 기간 : " + remain + "일";
+    }else{
+        document.getElementById("remaining").innerHTML =
+            "전역일이 지났습니다.";
+    }
+}
+
+</script>
+
+</body>
+</html>
