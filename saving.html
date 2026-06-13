@@ -8,28 +8,34 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    background:#f5f7fa;
-    text-align:center;
+    background: linear-gradient(135deg, #eef2ff, #f5f7fa);
     padding:40px;
+    text-align:center;
+    color:#1f2937;
 }
 
 .container{
     max-width:600px;
     margin:auto;
     background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    padding:35px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+nav a{
+    margin:0 6px;
+    text-decoration:none;
+    color:#2563eb;
 }
 
 input, button{
     width:100%;
-    padding:12px;
-    margin-top:10px;
+    padding:14px;
+    margin-top:12px;
+    border-radius:10px;
+    border:1px solid #e5e7eb;
     font-size:16px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    box-sizing:border-box;
 }
 
 button{
@@ -37,6 +43,11 @@ button{
     color:white;
     border:none;
     cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#1d4ed8;
 }
 
 .result{
@@ -46,59 +57,51 @@ button{
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
-<div style="margin-bottom:20px;">
-<a href="index.html">전역일 계산기</a> |
-<a href="saving.html">군 적금 계산기</a> |
-<a href="about.html">사이트 소개</a>
-<a href="privacy.html">개인정보처리방침</a>
-</div>
-<h1>군 적금 계산기</h1>
 
-<p>월 납입액 (원)</p>
-<input type="number" id="monthly" placeholder="예: 400000">
+<nav>
+  <a href="index.html">전역일 계산기</a>
+  <a href="saving.html">군 적금 계산기</a>
+  <a href="about.html">사이트 소개</a>
+  <a href="privacy.html">개인정보처리방침</a>
+</nav>
 
-<p>납입 개월 수</p>
-<input type="number" id="months" placeholder="예: 18">
+<h1>💰 군 적금 계산기</h1>
 
-<button onclick="calculate()">계산하기</button>
+<p>월 적금 금액 입력</p>
+<input type="number" id="money" placeholder="예: 500000">
+
+<p>복무 개월 선택</p>
+<select id="month">
+  <option value="18">18개월 (육군)</option>
+  <option value="20">20개월 (해군)</option>
+  <option value="21">21개월 (공군/사회복무)</option>
+</select>
+
+<button onclick="calc()">계산하기</button>
 
 <div class="result" id="result"></div>
 
 </div>
 
 <script>
-function calculate(){
+function calc(){
+    const money = parseInt(document.getElementById("money").value);
+    const month = parseInt(document.getElementById("month").value);
 
-    const monthly =
-        Number(document.getElementById("monthly").value);
-
-    const months =
-        Number(document.getElementById("months").value);
-
-    if(!monthly || !months){
-        alert("값을 입력해주세요.");
+    if(!money){
+        alert("금액을 입력하세요");
         return;
     }
 
-    const totalDeposit = monthly * months;
-
-    const estimatedInterest =
-        Math.round(totalDeposit * 0.1);
-
-    const maturityAmount =
-        totalDeposit + estimatedInterest;
+    const total = money * month;
 
     document.getElementById("result").innerHTML =
-        `
-        총 납입액 : ${totalDeposit.toLocaleString()}원<br><br>
-        예상 이자 : ${estimatedInterest.toLocaleString()}원<br><br>
-        예상 수령액 : ${maturityAmount.toLocaleString()}원
-        `;
+        "총 예상 적금: " + total.toLocaleString() + "원";
 }
 </script>
 
 </body>
-</html>
