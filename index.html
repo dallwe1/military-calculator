@@ -84,7 +84,23 @@ button:hover{
 
 <div class="result" id="result"></div>
 <div class="sub" id="remaining"></div>
+<div style="margin-top:20px;">
+    <div style="
+        width:100%;
+        height:25px;
+        background:#ddd;
+        border-radius:20px;
+        overflow:hidden;">
+        <div id="progressBar" style="
+            width:0%;
+            height:100%;
+            background:#2563eb;
+            transition:0.5s;">
+        </div>
+    </div>
 
+    <p id="progressText"></p>
+</div>
 </div>
 
 <script>
@@ -123,7 +139,31 @@ function calculateDischarge(){
 
     const remain =
         Math.ceil(diff / (1000*60*60*24));
+const totalDays =
+    Math.ceil(
+        (dischargeDate - enlistDate)
+        / (1000*60*60*24)
+    );
 
+const servedDays =
+    Math.ceil(
+        (today - enlistDate)
+        / (1000*60*60*24)
+    );
+
+let progress =
+    Math.floor(
+        (servedDays / totalDays) * 100
+    );
+
+if(progress < 0) progress = 0;
+if(progress > 100) progress = 100;
+
+document.getElementById("progressBar").style.width =
+    progress + "%";
+
+document.getElementById("progressText").innerHTML =
+    "복무 진행률 : " + progress + "%";
     if(remain > 0){
         document.getElementById("remaining").innerHTML =
             "남은 기간 : " + remain + "일";
