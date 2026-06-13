@@ -87,6 +87,7 @@ button:hover{
 
 <div class="result" id="result"></div>
 <div class="sub" id="remaining"></div>
+<div class="sub" id="served"></div>
 <div style="margin-top:20px;">
     <div style="
         width:100%;
@@ -153,7 +154,8 @@ const servedDays =
         (today - enlistDate)
         / (1000*60*60*24)
     );
-
+document.getElementById("served").innerHTML =
+    "복무한 기간 : " + servedDays + "일";
 let progress =
     Math.floor(
         (servedDays / totalDays) * 100
